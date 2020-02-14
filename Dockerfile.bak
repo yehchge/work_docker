@@ -1,0 +1,15 @@
+# 從官方PHP image 建構
+FROM php
+
+# 將 index.php 複製到容器內的 /var/www 目錄下
+ADD index.php /var/www/
+
+# 對外 8080 埠
+EXPOSE 8080
+
+# 設定容器預設工作目錄 /var/www
+WORKDIR /var/www/
+
+# 容器執行後預設執行的指令
+ENTRYPOINT ["php","-S","0.0.0.0:8080"]
+
