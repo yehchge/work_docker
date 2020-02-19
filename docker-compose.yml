@@ -3,13 +3,16 @@ services:
   nginx:
     build: ./nginx
     container_name: my_nginx
+    networks:
+      app_net:
+        ipv4_address: 172.18.2.10
     ports:
       - "80:80"
     depends_on:
       - php
       - mysql
-    networks:
-      - frontend
+    # networks:
+    #   - frontend
     # links:
     #   - "php"
     volumes:
@@ -17,10 +20,15 @@ services:
   php:
     build: ./php
     container_name: my_php
+    networks:
+      app_net:
+        ipv4_address: 172.18.2.11
     ports:
       - "9000:9000"
-    networks:
-      - frontend
+    extra_hosts:
+      - "localhost:172.18.2.10"
+    # networks:
+    #   - frontend
     # links:
     #   - "mysql"
       #- "redis"
@@ -29,6 +37,9 @@ services:
   mysql:
     build: ./mysql
     container_name: my_mysql
+    networks:
+      app_net:
+        ipv4_address: 172.18.2.12
     ports:
       - "3306:3306"
     volumes:
@@ -39,6 +50,12 @@ services:
       #build: ./redis
       #ports:
         #- "6379:6379"
+# networks:
+#   frontend: 
+#     driver: bridge
 networks:
-  frontend: 
-    driver: bridge
+  app_net:
+      ipam:
+        driver: default
+        config:
+          - subnet: "172.18.2.0/24"
