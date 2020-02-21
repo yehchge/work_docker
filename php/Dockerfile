@@ -8,6 +8,8 @@ EXPOSE 9000
 RUN apt-get update -y && apt-get install -y libpng-dev
 #COPY redis.tgz /home/redis.tgz
 RUN docker-php-ext-install gd \
+ && docker-php-ext-install zip \
+ && docker-php-ext-install opcache \
  && docker-php-ext-install pdo_mysql \
  && docker-php-ext-install mysqli \
  && pecl install xdebug \

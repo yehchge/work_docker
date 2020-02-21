@@ -1,5 +1,18 @@
 version: "3"
 services:
+  apache:
+    build: ./apache
+    container_name: my_apache
+    networks:
+      app_net:
+        ipv4_address: 172.18.2.9
+    ports:
+      - "8080:80"
+    depends_on:
+      - php
+      - mysql
+    volumes:
+      - "/data/sites:/usr/local/apache2/htdocs"
   nginx:
     build: ./nginx
     container_name: my_nginx
@@ -11,10 +24,6 @@ services:
     depends_on:
       - php
       - mysql
-    # networks:
-    #   - frontend
-    # links:
-    #   - "php"
     volumes:
       - "/data/sites:/usr/share/nginx/html"
   php:
@@ -25,8 +34,8 @@ services:
         ipv4_address: 172.18.2.11
     ports:
       - "9000:9000"
-    extra_hosts:
-      - "localhost:172.18.2.10"
+    # extra_hosts:
+    #   - "localhost:172.18.2.10"
     # networks:
     #   - frontend
     # links:
@@ -34,6 +43,7 @@ services:
       #- "redis"
     volumes:
       - "/data/sites:/usr/share/nginx/html"
+      - "/data/sites:/usr/local/apache2/htdocs"
   mysql:
     build: ./mysql
     container_name: my_mysql
