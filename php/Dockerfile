@@ -22,6 +22,6 @@ RUN docker-php-ext-install gd \
 #RUN chmod 755 /usr/local/bin/composer
 
 #WORKDIR /opt
-#RUN usermod -u 1000 www-data
+RUN usermod -u 1000 www-data
 
 #VOLUME ["/opt"]
