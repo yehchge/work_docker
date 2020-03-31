@@ -1,11 +1,12 @@
-FROM php:7.1-fpm
+#FROM php:7.1-fpm
+FROM php:7.4-fpm
 
 ADD php.ini /usr/local/etc/php/php.ini
 ADD php-fpm.conf /usr/local/etc/php-fpm.conf
 
 EXPOSE 9000
 
-RUN apt-get update -y && apt-get install -y libpng-dev
+RUN apt-get update -y && apt-get install -y libpng-dev libzip-dev zip
 #COPY redis.tgz /home/redis.tgz
 RUN docker-php-ext-install gd \
  && docker-php-ext-install zip \
