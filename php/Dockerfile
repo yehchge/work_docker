@@ -19,8 +19,11 @@ RUN docker-php-ext-install gd \
 #RUN docker-php-ext-install gd \
 #   && docker-php-ext-install pdo_mysql \
 #   && pecl install /home/redis.tgz && echo "extension=redis.so" > /usr/local/etc/php/conf.d/redis.ini
-#ADD composer.phar /usr/local/bin/composer
-#RUN chmod 755 /usr/local/bin/composer
+ADD composer.phar /usr/local/bin/composer
+RUN chmod 755 /usr/local/bin/composer
+ADD deployer.phar /usr/local/bin/dep
+RUN chmod 755 /usr/local/bin/dep
+
 
 #WORKDIR /opt
 RUN usermod -u 1000 www-data
