@@ -5,7 +5,7 @@ services:
     container_name: my_apache
     networks:
       app_net:
-        ipv4_address: 172.18.2.9
+        ipv4_address: 172.88.2.9
     ports:
       - "8080:80"
     depends_on:
@@ -18,7 +18,7 @@ services:
     container_name: my_nginx
     networks:
       app_net:
-        ipv4_address: 172.18.2.10
+        ipv4_address: 172.88.2.10
     ports:
       - "80:80"
     depends_on:
@@ -31,11 +31,11 @@ services:
     container_name: my_php
     networks:
       app_net:
-        ipv4_address: 172.18.2.11
+        ipv4_address: 172.88.2.11
     ports:
       - "9000:9000"
     extra_hosts:
-      - "localhost:172.18.2.10"
+      - "localhost:172.88.2.10"
     # networks:
     #   - frontend
     # links:
@@ -49,7 +49,7 @@ services:
     container_name: my_mysql
     networks:
       app_net:
-        ipv4_address: 172.18.2.12
+        ipv4_address: 172.88.2.12
     ports:
       - "3306:3306"
     volumes:
@@ -68,4 +68,4 @@ networks:
       ipam:
         driver: default
         config:
-          - subnet: "172.18.2.0/24"
+          - subnet: "172.88.2.0/24"

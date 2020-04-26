@@ -23,6 +23,8 @@ ADD composer.phar /usr/local/bin/composer
 RUN chmod 755 /usr/local/bin/composer
 ADD deployer.phar /usr/local/bin/dep
 RUN chmod 755 /usr/local/bin/dep
+ADD phpunit.phar /usr/local/bin/phpunit
+RUN chmod 755 /usr/local/bin/phpunit
 
 
 #WORKDIR /opt
