@@ -56,6 +56,35 @@ services:
       - "/data/mysql:/var/lib/mysql"
     environment:
       MYSQL_ROOT_PASSWORD: 123456
+  mongo:
+    image: mongo
+    restart: always
+    container_name: my_mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: robot
+      MONGO_INITDB_ROOT_PASSWORD: robot
+    networks:
+      app_net:
+        ipv4_address: 172.88.2.13
+    ports:
+      - "27017:27017"
+    # volumes:
+    #   - "/data/db:/data/db"
+  mongo-express:
+    image: mongo-express
+    restart: always
+    container_name: my_mongo_express
+    networks:
+      app_net:
+        ipv4_address: 172.88.2.14
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mongo
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: robot
+      ME_CONFIG_MONGODB_ADMINPASSWORD: robot
+      ME_CONFIG_MONGODB_SERVER: 172.88.2.13
     #redis:
       #build: ./redis
       #ports:

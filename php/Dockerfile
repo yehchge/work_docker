@@ -14,6 +14,7 @@ RUN docker-php-ext-install gd \
  && docker-php-ext-install pdo_mysql \
  && docker-php-ext-install mysqli \
  && pecl install xdebug \
+ && pecl install mongodb \
  && docker-php-ext-enable xdebug
 
 #RUN docker-php-ext-install gd \
