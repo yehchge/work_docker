@@ -1,5 +1,7 @@
 #FROM php:7.1-fpm
 FROM php:7.4-fpm
+#FROM php:5.5-fpm
+#FROM php:5.6-fpm
 
 ADD php.ini /usr/local/etc/php/php.ini
 ADD php-fpm.conf /usr/local/etc/php-fpm.conf
@@ -12,6 +14,7 @@ RUN docker-php-ext-install gd \
  && docker-php-ext-install zip \
  && docker-php-ext-install opcache \
  && docker-php-ext-install pdo_mysql \
+# && docker-php-ext-install mysql \ 
  && docker-php-ext-install mysqli \
  && pecl install xdebug \
  && pecl install mongodb \
