@@ -8,7 +8,22 @@ ADD php-fpm.conf /usr/local/etc/php-fpm.conf
 
 EXPOSE 9000
 
-RUN apt-get update -y && apt-get install -y libpng-dev libzip-dev zip
+RUN apt-get update -y && apt-get install -y \
+    zlib1g-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libmagick++-dev \
+    libmagickwand-dev \ 
+    libpq-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
+    libonig-dev \
+    libwebp-dev \
+    libxpm-dev \
+    libzip-dev \
+    zip \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg=/usr/include/ --enable-gd
+
 #COPY redis.tgz /home/redis.tgz
 RUN docker-php-ext-install gd \
  && docker-php-ext-install zip \
@@ -16,9 +31,12 @@ RUN docker-php-ext-install gd \
  && docker-php-ext-install pdo_mysql \
 # && docker-php-ext-install mysql \ 
  && docker-php-ext-install mysqli \
+ && pecl install imagick-3.4.3 \
  && pecl install xdebug \
  && pecl install mongodb \
- && docker-php-ext-enable xdebug
+ && docker-php-ext-enable xdebug \
+ && docker-php-ext-enable gd \
+ && docker-php-ext-enable imagick
 
 #RUN docker-php-ext-install gd \
 #   && docker-php-ext-install pdo_mysql \
