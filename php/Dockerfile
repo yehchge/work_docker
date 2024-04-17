@@ -32,6 +32,9 @@ RUN pecl channel-update pecl.php.net \
  && docker-php-ext-install pdo_mysql \
 # && docker-php-ext-install mysql \ 
  && docker-php-ext-install mysqli \
+ && apt-get install -y libicu-dev \
+ && docker-php-ext-install intl \
+ && docker-php-ext-install intl \
 # && pecl install imagick-3.4.3 \
 # && pecl install xdebug \
 # && pecl install mongodb \
