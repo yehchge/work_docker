@@ -1,11 +1,9 @@
-version: "3"
 services:
   apache:
     build: ./apache
     container_name: my_apache
     networks:
-      app_net:
-        ipv4_address: 172.88.2.9
+      - app_net
     ports:
       - "8080:80"
     depends_on:
@@ -17,8 +15,7 @@ services:
     build: ./nginx
     container_name: my_nginx
     networks:
-      app_net:
-        ipv4_address: 172.88.2.10
+      - app_net
     ports:
       - "80:80"
     depends_on:
@@ -30,8 +27,7 @@ services:
     build: ./php
     container_name: my_php
     networks:
-      app_net:
-        ipv4_address: 172.88.2.11
+      - app_net
     ports:
       - "9000:9000"
     extra_hosts:
@@ -48,8 +44,7 @@ services:
     build: ./mysql
     container_name: my_mysql
     networks:
-      app_net:
-        ipv4_address: 172.88.2.12
+      - app_net
     ports:
       - "3306:3306"
     volumes:
@@ -94,7 +89,4 @@ services:
 #     driver: bridge
 networks:
   app_net:
-      ipam:
-        driver: default
-        config:
-          - subnet: "172.88.2.0/24"
+    driver: bridge

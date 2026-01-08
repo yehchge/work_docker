@@ -21,3 +21,8 @@ Mongo
 ref: https://testerhome.com/topics/12768
 ref: https://hub.docker.com/_/mongo
 
+### 部屬 portainer
+
+```bash
+docker compose -f portainer-compose.yaml up -d
+```
