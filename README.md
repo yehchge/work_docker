@@ -26,3 +26,10 @@ ref: https://hub.docker.com/_/mongo
 ```bash
 docker compose -f portainer-compose.yaml up -d
 ```
+
+### 修改完 docker compose 腳本, 要重新部屬
+
+```bash
+docker compose up -d --build (對所有服務)
+docker compose up -d --build <服務名稱> (對特定服務)
+```

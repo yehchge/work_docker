@@ -1,7 +1,8 @@
 #FROM php:7.1-fpm
-FROM php:7.4-fpm
+#FROM php:7.4-fpm
 #FROM php:5.5-fpm
 #FROM php:5.6-fpm
+FROM php:8.3-fpm
 
 ADD php.ini /usr/local/etc/php/php.ini
 ADD php-fpm.conf /usr/local/etc/php-fpm.conf
