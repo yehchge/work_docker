@@ -1,56 +1,135 @@
 services:
-  apache:
-    build: ./apache
-    container_name: my_apache
-    networks:
-      - app_net
-    ports:
-      - "8080:80"
-    depends_on:
-      - php
-      - mysql
+  # PHP-FPM 處理器 (共用)
+  php-fpm:
+    #image: php:${PHP_VERSION}
+    build:
+      context: ./php
+      args:
+        PHP_VERSION: ${PHP_VERSION}
     volumes:
-      - "/data/sites:/usr/local/apache2/htdocs"
-  nginx:
-    build: ./nginx
-    container_name: my_nginx
+      - ${PROJECTS_ROOT}:/var/www/html
     networks:
       - app_net
+
+  # Nginx 服務獨立運作 (作為主要 Web Server, Port 80)
+  nginx:
+    image: nginx:alpine
     ports:
       - "80:80"
-    depends_on:
-      - php
-      - mysql
     volumes:
-      - "/data/sites:/usr/share/nginx/html"
-  php:
-    build: ./php
-    container_name: my_php
+      - ${PROJECTS_ROOT}:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    # depends_on:
+    #   - php-fpm
     networks:
       - app_net
+
+  # Apache - 獨立運作 (Port 8080)
+  apache:
+    image: httpd:2.4-alpine
     ports:
-      - "9000:9000"
-    extra_hosts:
-      - "localhost:172.88.2.10"
-    # networks:
-    #   - frontend
-    # links:
-    #   - "mysql"
-      #- "redis"
+      - "8080:80"
     volumes:
-      - "/data/sites:/usr/share/nginx/html"
-      - "/data/sites:/usr/local/apache2/htdocs"
-  mysql:
-    build: ./mysql
-    container_name: my_mysql
+      - ${PROJECTS_ROOT}:/var/www/html
+      - ./apache/httpd.conf:/usr/local/apache2/conf/httpd.conf
     networks:
       - app_net
+  
+  # 動態切換 MySQL / MariaDB 資料庫
+  mysql:
+    image: ${DB_IMAGE}
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
     ports:
       - "3306:3306"
     volumes:
-      - "/data/mysql:/var/lib/mysql"
-    environment:
-      MYSQL_ROOT_PASSWORD: 123456
+      - ${DATABASE_ROOT}:/var/lib/mysql
+    networks:
+      - app_net
+
+  # Portainer (Web 管理界面)
+  portainer:
+    container_name: portainer
+    image: portainer/portainer-ce:lts
+    # image: portainer/portainer-ce:latest
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    ports:
+      - "9443:9443"
+
+  # # 自訂 Apache2
+  # apache:
+  #   build: ./apache
+  #   container_name: my_apache
+  #   networks:
+  #     - app_net
+  #   ports:
+  #     - "8080:80"
+  #   depends_on:
+  #     - php
+  #     - mysql
+  #   volumes:
+  #     - "/data/sites:/usr/local/apache2/htdocs"
+
+  # # 自訂 nginx  
+  # nginx:
+  #   build: ./nginx
+  #   container_name: my_nginx
+  #   networks:
+  #     - app_net
+  #   ports:
+  #     - "80:80"
+  #   depends_on:
+  #     - php
+  #     - mysql
+  #   volumes:
+  #     - "/data/sites:/usr/share/nginx/html"
+  # php:
+  #   build: ./php
+  #   container_name: my_php
+  #   networks:
+  #     - app_net
+  #   ports:
+  #     - "9000:9000"
+  #   extra_hosts:
+  #     - "localhost:172.88.2.10"
+  #   # networks:
+  #   #   - frontend
+  #   # links:
+  #   #   - "mysql"
+  #     #- "redis"
+  #   volumes:
+  #     - "/data/sites:/usr/share/nginx/html"
+  #     - "/data/sites:/usr/local/apache2/htdocs"
+  
+  # # 自訂 MySQL
+  # mysql:
+  #   build: ./mysql
+  #   container_name: my_mysql
+  #   networks:
+  #     - app_net
+  #   ports:
+  #     - "3306:3306"
+  #   volumes:
+  #     - "/data/mysql:/var/lib/mysql"
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: 123456
+  
+  # 自訂 portainer
+  # portainer:
+  #   container_name: portainer
+  #   image: portainer/portainer-ce:lts
+  #   restart: always
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - portainer_data:/data
+  #   ports:
+  #     - 9443:9443
+
   # mongo:
   #   image: mongo
   #   restart: always
@@ -87,6 +166,13 @@ services:
 # networks:
 #   frontend: 
 #     driver: bridge
+
+volumes:
+  mysql_data:
+    name: mysql_data
+  portainer_data:
+    name: portainer_data
+
 networks:
   app_net:
     driver: bridge

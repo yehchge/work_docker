@@ -1,0 +1,26 @@
+services:
+  mysql:
+    image: percona/percona-server:8.0
+    container_name: ${MYSQL_NAME}
+    ports:
+      - "${MYSQL_PORT}:${MYSQL_PORT}"
+    environment:
+      MYSQL_NAME: "${MYSQL_NAME}"
+      MYSQL_ROOT_HOST: "${MYSQL_ROOT_HOST}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - mysql_log:/var/log/mysql
+    networks:
+      - app
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+    name: ${MYSQL_NAME}_data
+  mysql_log:
+    name: ${MYSQL_NAME}_log
+
+networks:
+  app:
+    external: true
