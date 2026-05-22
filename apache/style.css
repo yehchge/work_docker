@@ -1,0 +1,7 @@
+/* Example style.css */
+table { width: 100%; border-collapse: collapse; }
+tr:hover { background-color: #f1f1f1; }
+th, td { text-align: left; padding: 8px; }
+th { background-color: #4CAF50; color: white; }
+.header { background: #333; color: white; padding: 10px; }
+.footer { font-size: 0.8em; margin-top: 20px; }

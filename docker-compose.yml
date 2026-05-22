@@ -1,6 +1,7 @@
 services:
   # PHP-FPM 處理器 (共用)
   php-fpm:
+    container_name: phpfpm
     #image: php:${PHP_VERSION}
     build:
       context: ./php
@@ -13,6 +14,7 @@ services:
 
   # Nginx 服務獨立運作 (作為主要 Web Server, Port 80)
   nginx:
+    container_name: nginx
     image: nginx:alpine
     ports:
       - "80:80"
@@ -30,17 +32,23 @@ services:
 
   # Apache - 獨立運作 (Port 8080)
   apache:
+    container_name: apache
     image: httpd:2.4-alpine
     ports:
       - "8080:80"
     volumes:
       - ${PROJECTS_ROOT}:/var/www/html
       - ./apache/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      #- ./apache/.htaccess:/var/www/html/.htaccess
+      - ./apache/header.shtml:/var/www/html/header.shtml
+      - ./apache/footer.shtml:/var/www/html/footer.shtml
+      - ./apache/style.css:/var/www/html/style.css
     networks:
       - app_net
   
   # 動態切換 MySQL / MariaDB 資料庫
   mysql:
+    container_name: mysql
     image: ${DB_IMAGE}
     restart: always
     environment:
