@@ -10,7 +10,7 @@ $ docker system prune -a
 ### Remember stop local apache2 or httpd, because docker will use port: 80
 
 ```bash
-$ docker-compose up
+$ docker compose up
 ```
 
 ref: https://www.itread01.com/content/1549814584.html

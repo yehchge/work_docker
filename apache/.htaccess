@@ -2,7 +2,7 @@ Options +Indexes
 
 IndexOptions +FoldersFirst +FancyIndexing +HTMLTable +VersionSort +NameWidth=* +Charset=UTF-8 \
 			 +SuppressHTMLPreamble +IconHeight=24 +IconWidth=24
-IndexStyleSheet "/style.css"
+IndexStyleSheet "style.css"
 
 HeaderName header.html
 ReadmeName footer.html

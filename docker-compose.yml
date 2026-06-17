@@ -33,14 +33,14 @@ services:
   # Apache - 獨立運作 (Port 8080)
   apache:
     container_name: apache
-    # image: httpd:2.4-alpine
-    image: httpd:2.4
+    image: httpd:2.4-alpine
+    # image: httpd:2.4
     ports:
       - "8080:80"
     volumes:
       - ${PROJECTS_ROOT}:/var/www/html
       - ./apache/httpd.conf:/usr/local/apache2/conf/httpd.conf
-      #- ./apache/.htaccess:/var/www/html/.htaccess
+      - ./apache/.htaccess:/var/www/html/.htaccess
       - ./apache/header.html:/var/www/html/header.html
       - ./apache/footer.html:/var/www/html/footer.html
       - ./apache/style.css:/var/www/html/style.css
