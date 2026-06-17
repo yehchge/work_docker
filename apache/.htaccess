@@ -4,8 +4,8 @@ IndexOptions +FoldersFirst +FancyIndexing +HTMLTable +VersionSort +NameWidth=* +
 			 +SuppressHTMLPreamble +IconHeight=24 +IconWidth=24
 IndexStyleSheet "/style.css"
 
-HeaderName "/header.shtml"
-ReadmeName "/footer.shtml"
+HeaderName header.html
+ReadmeName footer.html
 
 # Ignore these files so they don't list in the directory content
 IndexIgnore header.html footer.html .htaccess style.css
