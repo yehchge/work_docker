@@ -1,0 +1,13 @@
+# alerts.yml
+groups:
+  - name: network_alerts
+    rules:
+      - alert: ExternalNetworkDown
+        # 當 probe_success 為 0 時觸發
+        expr: probe_success == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "網路連線異常: {{ $labels.instance }}"
+          description: "監測目標 {{ $labels.instance }} 已失去連線超過 1 分鐘。"

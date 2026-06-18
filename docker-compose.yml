@@ -238,6 +238,7 @@ services:
       - "9090:9090"
     volumes: 
       - "./prometheus.yml:/etc/prometheus/prometheus.yml"
+      - "./alerts.yml:/etc/prometheus/alerts.yml"
     privileged: true
     depends_on:
       - cadvisor
@@ -261,6 +262,16 @@ services:
     privileged: true
     depends_on:
       - prometheus
+    networks:
+      - app_net
+
+  blackbox_exporter:
+    image: prom/blackbox-exporter:latest
+    ports:
+      - "9115:9115"
+    volumes:
+      - ./blackbox.yml:/config/blackbox.yml
+    command: --config.file=/config/blackbox.yml
     networks:
       - app_net
 
