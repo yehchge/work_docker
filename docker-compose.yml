@@ -1,4 +1,19 @@
 services:
+  # dotnet-app:
+  #   build:
+  #     context: ./net10
+  #   container_name: dotnet10_app
+  #   ports:
+  #     - "5000:8080"
+  #   volumes:
+  #     - ${PROJECTS_ROOT}:/src
+  #   working_dir: /src/work_docker/net10/HelloWorld
+  #   tty: true
+  #   stdin_open: true
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT=Development
+  #   restart: always
+
   # PHP-FPM 處理器 (共用)
   php-fpm:
     container_name: phpfpm
@@ -27,6 +42,18 @@ services:
       - ./nginx/.autoindex.js:/var/www/html/.autoindex.js
     # depends_on:
     #   - php-fpm
+    networks:
+      - app_net
+
+
+  nginx-prometheus-exporter:
+    image: nginx/nginx-prometheus-exporter:0.10
+    container_name: nginx-prometheus-exporter
+    command: -nginx.scrape-uri http://nginx/stub_status
+    ports:
+      - 9113:9113
+    depends_on:
+      - nginx
     networks:
       - app_net
 
@@ -180,7 +207,66 @@ services:
 #   frontend: 
 #     driver: bridge
 
+  cadvisor:
+    container_name: cadvisor
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    # network_mode: "host"
+    ports:
+      - "3030:8080"
+    volumes: 
+      - "/:/rootfs:ro"
+      - "/var/run:/var/run:ro"
+      - "/sys:/sys:ro"
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+      - "/var/lib/docker/:/var/lib/docker"
+      - "/dev/disk/:/dev/disk:ro"
+      - "/run/containerd/containerd.sock:/run/containerd/containerd.sock:ro"
+    privileged: true
+    devices: 
+      - "/dev/kmsg"
+    networks:
+      - app_net
+    command:
+      - "--containerd=/run/containerd/containerd.sock"
+      - "--containerd-namespace=moby"
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    # network_mode: "host"
+    ports:
+      - "9090:9090"
+    volumes: 
+      - "./prometheus.yml:/etc/prometheus/prometheus.yml"
+    privileged: true
+    depends_on:
+      - cadvisor
+    networks:
+      - app_net
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:latest
+    # network_mode: "host"
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      - DS_PROMETHEUS=prometheus
+    volumes: 
+      - "grafana-data:/var/lib/grafana"
+      - "./datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml"
+      - "./dashboard.json:/var/lib/grafana/dashboards/dashboard.json"
+      - "./default.yaml:/etc/grafana/provisioning/dashboards/default.yaml"
+    privileged: true
+    depends_on:
+      - prometheus
+    networks:
+      - app_net
+
 volumes:
+  grafana-data:
+    name: grafana-data
   mysql_data:
     name: mysql_data
   portainer_data:

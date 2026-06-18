@@ -1,0 +1,15 @@
+/src/work_docker/net10/HelloWorld/bin/Debug/net10.0/HelloWorld
+/src/work_docker/net10/HelloWorld/bin/Debug/net10.0/HelloWorld.deps.json
+/src/work_docker/net10/HelloWorld/bin/Debug/net10.0/HelloWorld.runtimeconfig.json
+/src/work_docker/net10/HelloWorld/bin/Debug/net10.0/HelloWorld.dll
+/src/work_docker/net10/HelloWorld/bin/Debug/net10.0/HelloWorld.pdb
+/src/work_docker/net10/HelloWorld/obj/Debug/net10.0/HelloWorld.GeneratedMSBuildEditorConfig.editorconfig
+/src/work_docker/net10/HelloWorld/obj/Debug/net10.0/HelloWorld.AssemblyInfoInputs.cache
+/src/work_docker/net10/HelloWorld/obj/Debug/net10.0/HelloWorld.AssemblyInfo.cs
+/src/work_docker/net10/HelloWorld/obj/Debug/net10.0/HelloWorld.csproj.CoreCompileInputs.cache
+/src/work_docker/net10/HelloWorld/obj/Debug/net10.0/HelloWorld.sourcelink.json
+/src/work_docker/net10/HelloWorld/obj/Debug/net10.0/HelloWorld.dll
+/src/work_docker/net10/HelloWorld/obj/Debug/net10.0/refint/HelloWorld.dll
+/src/work_docker/net10/HelloWorld/obj/Debug/net10.0/HelloWorld.pdb
+/src/work_docker/net10/HelloWorld/obj/Debug/net10.0/HelloWorld.genruntimeconfig.cache
+/src/work_docker/net10/HelloWorld/obj/Debug/net10.0/ref/HelloWorld.dll
