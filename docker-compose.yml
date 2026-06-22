@@ -1,22 +1,8 @@
 services:
-  # dotnet-app:
-  #   build:
-  #     context: ./net10
-  #   container_name: dotnet10_app
-  #   ports:
-  #     - "5000:8080"
-  #   volumes:
-  #     - ${PROJECTS_ROOT}:/src
-  #   working_dir: /src/work_docker/net10/HelloWorld
-  #   tty: true
-  #   stdin_open: true
-  #   environment:
-  #     - ASPNETCORE_ENVIRONMENT=Development
-  #   restart: always
 
   # PHP-FPM 處理器 (共用)
   php-fpm:
-    container_name: phpfpm
+    container_name: php-fpm
     #image: php:${PHP_VERSION}
     build:
       context: ./php
@@ -44,7 +30,6 @@ services:
     #   - php-fpm
     networks:
       - app_net
-
 
   nginx-prometheus-exporter:
     image: nginx/nginx-prometheus-exporter:0.10
@@ -97,7 +82,7 @@ services:
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - portainer_data:/data
+      - /data/portainer_data:/data
     ports:
       - "9443:9443"
 
@@ -169,6 +154,21 @@ services:
   #     - portainer_data:/data
   #   ports:
   #     - 9443:9443
+
+  # dotnet-app:
+  #   build:
+  #     context: ./net10
+  #   container_name: dotnet10_app
+  #   ports:
+  #     - "5000:8080"
+  #   volumes:
+  #     - ${PROJECTS_ROOT}:/src
+  #   working_dir: /src/work_docker/net10/HelloWorld
+  #   tty: true
+  #   stdin_open: true
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT=Development
+  #   restart: always
 
   # mongo:
   #   image: mongo
