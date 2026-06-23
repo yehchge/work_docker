@@ -43,12 +43,17 @@ docker compose down
 docker compose up -d --build
 ```
 
-
 ### 修改完 docker compose 腳本, 要重新部屬
 
 ```bash
 docker compose up -d --build (對所有服務)
 docker compose up -d --build <服務名稱> (對特定服務)
+```
+
+### 開發時, 觀看 php 網頁執行的錯誤
+
+```bash
+docker compose logs -f php-fpm
 ```
 
 # 加入此行到 ~/.bashrc
