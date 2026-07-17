@@ -8,14 +8,38 @@
 ARG PHP_VERSION=8.2-fpm
 FROM php:${PHP_VERSION}
 
+# 複製安裝腳本
+#COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/bin/
+
+# 一行指令搞定所有擴充套件，它會自動處理系統相依與設定
+#RUN install-php-extensions gd intl pdo_mysql mysqli
+
 # 安裝 PHP 核心擴充
 RUN apt-get update && apt-get install -y \
     libicu-dev \
-    && docker-php-ext-configure intl \
-    && docker-php-ext-install intl pdo pdo_mysql mysqli
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    libwebp-dev \
+    zlib1g-dev \
+    libzip-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+#    && docker-php-ext-configure intl \
+#    && docker-php-ext-install intl pdo pdo_mysql mysqli
+
+# 2. 設定 GD 擴充套件
+RUN docker-php-ext-configure gd \
+    --with-freetype \
+    --with-jpeg \
+    --with-webp
+
+# 3. 安裝 PHP 核心擴充
+RUN docker-php-ext-install -j$(nproc) intl pdo pdo_mysql mysqli gd zip
 
 # 清理快取以縮小映像檔體積
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get clean
+#    && rm -rf /var/lib/apt/lists/*
 
 #ADD php.ini /usr/local/etc/php/php.ini
 #ADD php-fpm.conf /usr/local/etc/php-fpm.conf
