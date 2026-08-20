@@ -1,4 +1,45 @@
 services:
+  
+  # 動態切換 MySQL / MariaDB 資料庫
+  mysql:
+    image: ${DB_IMAGE}
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: nocodb
+      MYSQL_PASSWORD: nocodb@824
+    volumes:
+      - ${DATABASE_ROOT}:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app_net
+
+  nocodb:
+    image: nocodb/nocodb:0.265.1
+    container_name: ${NC_NAME}
+    restart: always
+    ports:
+      - "3004:8080"
+    # expose:
+    #   - "8080"
+    volumes:
+      - noco_data:/usr/app/data/
+    depends_on:
+      - mysql
+    networks:
+      - app_net
+    environment:
+      NC_DB: "${NC_DB}"
+      #NC_ALLOW_LOCAL_HOOKS: "true"
+    # restart: unless-stopped
 
   # PHP-FPM 處理器 (共用)
   php-fpm:
@@ -32,16 +73,16 @@ services:
     networks:
       - app_net
 
-  nginx-prometheus-exporter:
-    image: nginx/nginx-prometheus-exporter:0.10
-    container_name: nginx-prometheus-exporter
-    command: -nginx.scrape-uri http://nginx/stub_status
-    ports:
-      - 9113:9113
-    depends_on:
-      - nginx
-    networks:
-      - app_net
+  # nginx-prometheus-exporter:
+  #   image: nginx/nginx-prometheus-exporter:0.10
+  #   container_name: nginx-prometheus-exporter
+  #   command: -nginx.scrape-uri http://nginx/stub_status
+  #   ports:
+  #     - 9113:9113
+  #   depends_on:
+  #     - nginx
+  #   networks:
+  #     - app_net
 
   # Apache - 獨立運作 (Port 8080)
   apache:
@@ -57,21 +98,6 @@ services:
       - ./apache/header.html:/var/www/html/header.html
       - ./apache/footer.html:/var/www/html/footer.html
       - ./apache/style.css:/var/www/html/style.css
-    networks:
-      - app_net
-  
-  # 動態切換 MySQL / MariaDB 資料庫
-  mysql:
-    container_name: mysql
-    image: ${DB_IMAGE}
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${DB_DATABASE}
-    ports:
-      - "3306:3306"
-    volumes:
-      - ${DATABASE_ROOT}:/var/lib/mysql
     networks:
       - app_net
 
@@ -208,73 +234,73 @@ services:
 #   frontend: 
 #     driver: bridge
 
-  cadvisor:
-    container_name: cadvisor
-    image: gcr.io/cadvisor/cadvisor:v0.49.1
-    # network_mode: "host"
-    ports:
-      - "3030:8080"
-    volumes: 
-      - "/:/rootfs:ro"
-      - "/var/run:/var/run:ro"
-      - "/sys:/sys:ro"
-      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-      - "/var/lib/docker/:/var/lib/docker"
-      - "/dev/disk/:/dev/disk:ro"
-      - "/run/containerd/containerd.sock:/run/containerd/containerd.sock:ro"
-    privileged: true
-    devices: 
-      - "/dev/kmsg"
-    networks:
-      - app_net
-    command:
-      - "--containerd=/run/containerd/containerd.sock"
-      - "--containerd-namespace=moby"
+  # cadvisor:
+  #   container_name: cadvisor
+  #   image: gcr.io/cadvisor/cadvisor:v0.49.1
+  #   # network_mode: "host"
+  #   ports:
+  #     - "3030:8080"
+  #   volumes: 
+  #     - "/:/rootfs:ro"
+  #     - "/var/run:/var/run:ro"
+  #     - "/sys:/sys:ro"
+  #     - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+  #     - "/var/lib/docker/:/var/lib/docker"
+  #     - "/dev/disk/:/dev/disk:ro"
+  #     - "/run/containerd/containerd.sock:/run/containerd/containerd.sock:ro"
+  #   privileged: true
+  #   devices: 
+  #     - "/dev/kmsg"
+  #   networks:
+  #     - app_net
+  #   command:
+  #     - "--containerd=/run/containerd/containerd.sock"
+  #     - "--containerd-namespace=moby"
 
-  prometheus:
-    container_name: prometheus
-    image: prom/prometheus:latest
-    # network_mode: "host"
-    ports:
-      - "9090:9090"
-    volumes: 
-      - "./prometheus.yml:/etc/prometheus/prometheus.yml"
-      - "./alerts.yml:/etc/prometheus/alerts.yml"
-    privileged: true
-    depends_on:
-      - cadvisor
-    networks:
-      - app_net
+  # prometheus:
+  #   container_name: prometheus
+  #   image: prom/prometheus:latest
+  #   # network_mode: "host"
+  #   ports:
+  #     - "9090:9090"
+  #   volumes: 
+  #     - "./prometheus.yml:/etc/prometheus/prometheus.yml"
+  #     - "./alerts.yml:/etc/prometheus/alerts.yml"
+  #   privileged: true
+  #   depends_on:
+  #     - cadvisor
+  #   networks:
+  #     - app_net
 
-  grafana:
-    container_name: grafana
-    image: grafana/grafana:latest
-    # network_mode: "host"
-    ports:
-      - "3000:3000"
-    environment:
-      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
-      - DS_PROMETHEUS=prometheus
-    volumes: 
-      - "grafana-data:/var/lib/grafana"
-      - "./datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml"
-      - "./dashboard.json:/var/lib/grafana/dashboards/dashboard.json"
-      - "./default.yaml:/etc/grafana/provisioning/dashboards/default.yaml"
-    privileged: true
-    depends_on:
-      - prometheus
-    networks:
-      - app_net
+  # grafana:
+  #   container_name: grafana
+  #   image: grafana/grafana:latest
+  #   # network_mode: "host"
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+  #     - DS_PROMETHEUS=prometheus
+  #   volumes: 
+  #     - "grafana-data:/var/lib/grafana"
+  #     - "./datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml"
+  #     - "./dashboard.json:/var/lib/grafana/dashboards/dashboard.json"
+  #     - "./default.yaml:/etc/grafana/provisioning/dashboards/default.yaml"
+  #   privileged: true
+  #   depends_on:
+  #     - prometheus
+  #   networks:
+  #     - app_net
 
-  blackbox_exporter:
-    image: prom/blackbox-exporter:latest
-    ports:
-      - "9115:9115"
-    volumes:
-      - ./blackbox.yml:/config/blackbox.yml
-    command: --config.file=/config/blackbox.yml
-    networks:
-      - app_net
+  # blackbox_exporter:
+  #   image: prom/blackbox-exporter:latest
+  #   ports:
+  #     - "9115:9115"
+  #   volumes:
+  #     - ./blackbox.yml:/config/blackbox.yml
+  #   command: --config.file=/config/blackbox.yml
+  #   networks:
+  #     - app_net
 
 volumes:
   grafana-data:
@@ -283,6 +309,8 @@ volumes:
     name: mysql_data
   portainer_data:
     name: portainer_data
+  noco_data:
+    name: ${NC_NAME}_data
 
 networks:
   app_net:

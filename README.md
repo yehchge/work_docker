@@ -69,3 +69,11 @@ alias dphp='docker compose -f /data/sites/work_docker/docker-compose.yml exec -i
 
 # 因為你將資料庫放在 /data/mysql，請確保該目錄的權限允許 Docker 讀寫：
 sudo chown -R 999:999 /data/mysql  # 999 通常是 MySQL 容器內的用戶 ID
+
+
+# 完全清除舊有資料並重啟：如果資料庫內尚未有重要資料，最直接的做法是刪除舊的 Volume 並重新啟動：
+docker compose down -v
+docker compose up -d
+
+# 執行 docker compose down -v 是無法自動清空實體目錄資料的。
+sudo rm -rf <docker-compose.yml 中實體掛載的路徑>
