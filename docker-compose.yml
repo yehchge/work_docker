@@ -1,5 +1,22 @@
 services:
 
+  rabbitmq:
+    image: rabbitmq:latest
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: mamamiya
+    configs:
+      - source: rabbitmq-plugins
+        target: /etc/rabbitmq/enabled_plugins
+    volumes:
+      - rabbitmq-lib:/var/lib/rabbitmq/
+      - rabbitmq-log:/var/log/rabbitmq
+
   redis:
     image: redis:7.4-alpine
     container_name: redis_server
@@ -312,6 +329,10 @@ services:
   #   networks:
   #     - app_net
 
+configs:
+  rabbitmq-plugins:
+    content: "[rabbitmq_management]."
+
 volumes:
   grafana-data:
     name: grafana-data
@@ -321,6 +342,10 @@ volumes:
     name: portainer_data
   noco_data:
     name: ${NC_NAME}_data
+  rabbitmq-lib:
+    driver: local
+  rabbitmq-log:
+    driver: local
 
 networks:
   app_net:
